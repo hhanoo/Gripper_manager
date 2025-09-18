@@ -1,0 +1,20 @@
+services:
+  keti-gripper-system: # Service Name
+    image: hhanoo/keti:gripper-manager # Image Name
+    container_name: KETI_Gripper_manager # Container Name
+    privileged: true # like --privileged (권한 부여)
+    network_mode: host # like --network host (호스트 네트워크)
+    stdin_open: true # like -i (표준입력 유지)
+    tty: true # like -t (TTY 할당)
+
+    environment:
+      - DISPLAY=${DISPLAY} # like -e DISPLAY=$DISPLAY (X11 디스플레이)
+      - QT_X11_NO_MITSHM=1 # like -e (MIT-SHM 비활성화)
+      - LIBGL_ALWAYS_INDIRECT=1 # like -e (간접 렌더링 강제)
+
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix # like -v (X11 소켓)
+      - /dev:/dev:rw # like -v (모든 /dev 전달)
+      - .:/root/workspace/Gripper_manager # like -v (프로젝트)
+
+    working_dir: /root/workspace/Gripper_manager
