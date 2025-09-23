@@ -8,9 +8,10 @@ Gripper_manager/
 ├── docker-compose.yml              # Docker Compose configuration
 ├── docker-run.sh                   # Docker management & run script
 ├── Dockerfile                      # Docker build configuration
-├── keti_zimmer.py                  # Zimmer gripper control module
-├── main_window.py                  # Main window implementation (Python)
-├── main_window.ui                  # Qt Designer UI file
+├── koras.py                        # KORAS gripper control module
+├── koras_window.py / .ui           # KORAS window implementation (Python, UI)
+├── zimmer.py                       # Zimmer gripper control module
+├── zimmer_window.py / .ui          # Zimmer window implementation (Python, UI)
 └── README.md                       # Project documentation
 ```
 
@@ -38,7 +39,8 @@ cd /Gripper_manager
 >
 > | Command   | Description                             |
 > | --------- | --------------------------------------- |
-> | `run`     | 🤖 Run Gripper Manager GUI              |
+> | `zimmer   | 🤖 Run Zimmer Gripper Manager GUI       |
+> | `koras    | 🤖 Run KORAS Gripper Manager GUI        |
 > | -         |                                         |
 > | `start`   | 🟢 Start Docker Container               |
 > | `stop`    | 🔴 Stop Docker Container                |
@@ -65,7 +67,8 @@ cd /Gripper_manager
 
 ```bash
 # Run the GUI application
-./docker-run.sh run
+./docker-run.sh zimmer
+./docker-run.sh koras
 ```
 
 ### 🐍 Python (Manual)
@@ -81,7 +84,8 @@ pip install PySide6 pymodbus==3.6.9
 
 ```bash
 # Run manually (outside Docker)
-python3 main_window.py
+python3 zimmer_window.py
+python3 koras_window.py
 ```
 
 ## ✨ Main Features
@@ -110,3 +114,8 @@ python3 main_window.py
 - X11 forwarding must be enabled for GUI in Docker
 
 ## 🖥️ Screen Shot
+
+- Zimmer GUI
+
+  ![Zimmer GUI](docs/zimmer_gui.png)
+

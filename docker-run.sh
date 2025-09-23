@@ -132,13 +132,14 @@ connect_container() {
 # Run Function------------------------------------------------------------
 # Project Run
 run_project() {
-    print_info "${PROJECT_NAME} Run 중..."
+    local gripper_type="${1:-zimmer}"
+    print_info "${PROJECT_NAME} Run 중 (${gripper_type})..."
     xhost +local:docker
     $DOCKER_COMPOSE_CMD exec ${SERVICE_NAME} bash -c "
     cd ~/workspace/Gripper_manager
-    python3 main_window.py
+    python3 ${gripper_type}_window.py 
     "
-    print_success "${PROJECT_NAME} Run 완료"
+    print_success "${PROJECT_NAME} Run 완료 (${gripper_type})"
 }
 
 # Menu Function------------------------------------------------------------
@@ -147,7 +148,8 @@ show_menu() {
     echo ""
     echo "Available Commands:"
     echo ""
-    echo "  run         - Run ${PROJECT_NAME}"
+    echo "  zimmer      - Run ${PROJECT_NAME} (Zimmer)"
+    echo "  koras       - Run ${PROJECT_NAME} (KORAS)"
     echo ""
     echo "  1) start    - Docker 컨테이너 시작"
     echo "  2) stop     - Docker 컨테이너 중지"
@@ -166,8 +168,11 @@ main() {
     create_directories
 
     case "${1:-menu}" in
-        "run")
-            run_project
+        "zimmer")
+            run_project "zimmer"
+            ;;
+        "koras")
+            run_project "koras"
             ;;
         "start"|"1")
             start_system
