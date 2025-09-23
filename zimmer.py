@@ -114,12 +114,12 @@ class StatusFlags:
 # ------------------------------------------------------------------------------
 
 
-class KetiZimmer:
+class Zimmer:
     # 2-Finger Gripper : GEH6060IL, GEH6040IL
     # 3-Finger Gripper : GED6060IL, GED6040IL
     def __init__(self):
         """
-        Initialize the KetiZimmer class
+        Initialize the Zimmer class
         """
 
         # Register address definition
@@ -168,6 +168,7 @@ class KetiZimmer:
         self.gripper_init_flag = False
         self.gripper_grip_flag = False
 
+    # ---------------- Connection ----------------
     def connect(self, ip='192.168.3.112', port=502):
         """
         Connect to the Zimmer Gripper
@@ -188,7 +189,6 @@ class KetiZimmer:
             self.gripper_thread = threading.Thread(target=self.communication_func)
             self.gripper_thread.daemon = True
             self.gripper_thread.start()
-
         else:
             print(f'{RED}[ERROR]{NC} Not connected gripper')
             exit(1)
@@ -205,9 +205,10 @@ class KetiZimmer:
         self.connected = False
         print(f'{GREEN}[SUCCESS]{NC} Disconnected gripper')
 
+    # ---------------- Communication ----------------
     def communication_func(self):
         """
-        2-Finger Gripper function
+        Gripper function
         """
         self.gripper_thread_run = True
 
@@ -294,6 +295,7 @@ class KetiZimmer:
 
         self.reg_read = 0
 
+    # ------------------- Commands -------------------
     def init(self):
         """
         Zimmer Gripper initialization

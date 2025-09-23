@@ -3,7 +3,7 @@ from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton
 
 from console_colors import BLUE, GREEN, NC, RED, YELLOW
-from keti_zimmer import KetiZimmer
+from zimmer import Zimmer
 
 DEFAULT_IP = '192.168.3.112'
 DEFAULT_PORT = "502"
@@ -11,18 +11,18 @@ DEFAULT_VELOCITY = "50"
 DEFAULT_FORCE = "50"
 
 
-class MainWindow:
+class ZimmerWindow:
 
     def __init__(self):
         # --- Load UI ---
         loader = QUiLoader()
-        ui_file = QFile("main_window.ui")
+        ui_file = QFile("zimmer_window.ui")
         ui_file.open(QFile.ReadOnly)
         self.window = loader.load(ui_file)
         ui_file.close()
 
         # --- Initialize UI ---
-        self.gripper = KetiZimmer()
+        self.gripper = Zimmer()
 
         # --- Bind widgets ---
         self.edit_ip: QLineEdit = self.window.findChild(QLineEdit, "edit_ip")
@@ -144,10 +144,10 @@ if __name__ == "__main__":
     app = QApplication([])
 
     # --- Create GUI control window ---
-    main_window = MainWindow()
+    zimmer_window = ZimmerWindow()
 
     # --- Show UI ---
-    main_window.window.show()
+    zimmer_window.window.show()
 
     # --- Start application ---
     app.exec()
