@@ -119,3 +119,6 @@ python3 koras_window.py
 
   ![Zimmer GUI](docs/zimmer_gui.png)
 
+- KORAS GUI
+
+  ![KORAS GUI](docs/koras_gui.png)
