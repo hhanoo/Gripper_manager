@@ -15,20 +15,20 @@ Gripper_manager/
 └── README.md                       # Project documentation
 ```
 
-## 🔧 Environment & Installation
+## 🔧 Environment
 
-### 🐳 Docker Environment Setup
+### 🐳 Docker (Recommend)
 
 <details>
-<summary>Docker Environment Guide</summary>
+<summary>Setup Guide (Volume Shared)</summary>
 
-#### 1. Pull Docker Image
+#### 1. Build Docker Image
 
 ```bash
-sudo docker pull hhanoo/keti:gripper-manager
+docker build -t keti:gripper-manager -f Dockerfile .
 ```
 
-#### 2. Run Docker Container using Docker Compose
+#### 2. Run Docker Container using Docker compose
 
 ```bash
 cd /Gripper_manager
@@ -39,8 +39,8 @@ cd /Gripper_manager
 >
 > | Command   | Description                             |
 > | --------- | --------------------------------------- |
-> | `zimmer   | 🤖 Run Zimmer Gripper Manager GUI       |
-> | `koras    | 🤖 Run KORAS Gripper Manager GUI        |
+> | `zimmer ` | 🤖 Run Zimmer Gripper Manager GUI       |
+> | `koras`   | 🤖 Run KORAS Gripper Manager GUI        |
 > | -         |                                         |
 > | `start`   | 🟢 Start Docker Container               |
 > | `stop`    | 🔴 Stop Docker Container                |
@@ -54,7 +54,7 @@ cd /Gripper_manager
 
 ## 🚀 Usage
 
-### 🐳 Docker
+### 🐳 Docker (Recommend)
 
 #### 1. Start Services
 

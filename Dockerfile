@@ -92,5 +92,5 @@ ENV LC_ALL=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 
 # 워크스페이스 및 엔트리포인트 설정 ------------------------------------------------------------
-WORKDIR /root/workspace
+WORKDIR /workspace
 CMD ["bash"]

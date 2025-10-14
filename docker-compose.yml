@@ -1,6 +1,6 @@
 services:
   keti-gripper-system: # Service Name
-    image: hhanoo/keti:gripper-manager # Image Name
+    image: keti:gripper-manager # Image Name
     container_name: KETI_Gripper_manager # Container Name
     privileged: true # like --privileged (권한 부여)
     network_mode: host # like --network host (호스트 네트워크)
@@ -15,6 +15,6 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix # like -v (X11 소켓)
       - /dev:/dev:rw # like -v (모든 /dev 전달)
-      - .:/root/workspace/Gripper_manager # like -v (프로젝트)
+      - .:/workspace/Gripper_manager # like -v (프로젝트)
 
-    working_dir: /root/workspace/Gripper_manager
+    working_dir: /workspace/Gripper_manager
