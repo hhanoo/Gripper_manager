@@ -22,3 +22,11 @@ log/
 # System
 .DS_Store
 Thumbs.db
+
+# Backup files
+*.*.backup
+*_backup.txt
+
+# uv
+*.pyc
+.python-version

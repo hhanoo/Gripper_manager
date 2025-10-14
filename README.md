@@ -10,6 +10,8 @@ Gripper_manager/
 ├── koras.py                        # KORAS gripper control module
 ├── koras_window.py / .ui           # KORAS window implementation (Python, UI)
 ├── manage.sh                       # Docker management & run script
+├── pyproject.toml                  # Python project configuration
+├── uv.lock                         # uv dependency lock file
 ├── zimmer.py                       # Zimmer gripper control module
 ├── zimmer_window.py / .ui          # Zimmer window implementation (Python, UI)
 └── README.md                       # Project documentation
@@ -52,6 +54,42 @@ cd /Gripper_manager
 
 </details>
 
+### 🐍 Local
+
+<details>
+<summary>Setup Guide</summary>
+
+- Virtual environment using uv
+
+  ```bash
+  # Install uv (recommended for faster package management)
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+
+  # Sync Dependencies (from lock file)
+  uv sync --frozen
+  ```
+
+  > **NOTE:** Automatically create a `.venv` directory and install dependencies based on `pyproject.toml` / `uv.lock`.
+
+  > **NOTE:** In VSCode, set `python.defaultInterpreterPath` to `${workspaceFolder}/.venv/bin/python` for proper IntelliSense and debugging.
+
+- Global environmnet using Using uv
+
+  ```bash
+  uv export --frozen -o requirements.lock.txt
+  sudo uv pip install --system -r requirements.lock.txt
+  ```
+
+- Global environmnet using pip directly
+
+  ```bash
+  pip install --upgrade pip
+  pip install PySide6
+  pip install pymodbus==3.6.9
+  ```
+
+</details>
+
 ## 🚀 Usage
 
 ### 🐳 Docker (Recommend)
@@ -71,21 +109,14 @@ cd /Gripper_manager
 ./docker-run.sh koras
 ```
 
-### 🐍 Python (Manual)
+### 🐍 Python
 
-#### 1. Install Dependencies
-
-```bash
-# Install required packages
-pip install PySide6 pymodbus==3.6.9
-```
-
-#### 2. Run Application Manually
+#### 1. Run Application Manually
 
 ```bash
 # Run manually (outside Docker)
-python3 zimmer_window.py
-python3 koras_window.py
+uv run python zimmer_window.py
+uv run python koras_window.py
 ```
 
 ## ✨ Main Features
