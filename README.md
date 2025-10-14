@@ -6,10 +6,10 @@
 Gripper_manager/
 ├── console_colors.py               # Console color constants for terminal output
 ├── docker-compose.yml              # Docker Compose configuration
-├── docker-run.sh                   # Docker management & run script
 ├── Dockerfile                      # Docker build configuration
 ├── koras.py                        # KORAS gripper control module
 ├── koras_window.py / .ui           # KORAS window implementation (Python, UI)
+├── manage.sh                       # Docker management & run script
 ├── zimmer.py                       # Zimmer gripper control module
 ├── zimmer_window.py / .ui          # Zimmer window implementation (Python, UI)
 └── README.md                       # Project documentation
@@ -32,7 +32,7 @@ sudo docker pull hhanoo/keti:gripper-manager
 
 ```bash
 cd /Gripper_manager
-./docker-run.sh [COMMAND]
+./manage.sh [COMMAND]
 ```
 
 > ### Options
@@ -60,7 +60,7 @@ cd /Gripper_manager
 
 ```bash
 # Start all services in background
-./docker-run.sh start
+./manage.sh start
 ```
 
 #### 2. Run Application
