@@ -1,3 +1,5 @@
+import threading
+
 from PySide6.QtCore import QFile, QTimer
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton
@@ -44,7 +46,7 @@ class ZimmerWindow:
         if self.edit_port and not self.edit_port.text().strip():
             self.edit_port.setText(DEFAULT_PORT)
         if self.label_distance_range:
-            max_mm = self.gripper.gripper_max_distance / 100.0  # counts(0.01mm) -> mm
+            max_mm = (self.gripper.gripper_max_distance - 75) / 100.0  # counts(0.01mm) -> mm
             self.label_distance_range.setText(f"[ 0 ~ {max_mm:.2f} ] mm")
         if self.edit_force and not self.edit_force.text().strip():
             self.edit_force.setText(DEFAULT_FORCE)
@@ -82,11 +84,12 @@ class ZimmerWindow:
         else:
             ip = self.edit_ip.text().strip() if self.edit_ip else DEFAULT_IP
             port = int(self.edit_port.text()) if self.edit_port and self.edit_port.text() else DEFAULT_PORT
-
+            print(f"Connecting to {ip}:{port}")
             self.gripper.connect(ip=ip, port=port)
 
             if self.gripper.connected:
-                self.gripper.init()
+                init_thread = threading.Thread(target=self.gripper.init, daemon=True)
+                init_thread.start()
 
     def on_apply_options(self):
         """Apply velocity/force"""
@@ -127,7 +130,7 @@ class ZimmerWindow:
             self.label_cur_pose.setText(f"{pos_counts/100.0:.2f} mm")
 
         # show INIT state
-        if self.gripper.get_status() and self.label_cur_status:
+        if self.label_cur_status:
             if self.gripper.get_status():
                 self.set_status("CLOSE")
             else:
@@ -150,4 +153,8 @@ if __name__ == "__main__":
     zimmer_window.window.show()
 
     # --- Start application ---
-    app.exec()
+    try:
+        app.exec()
+    except KeyboardInterrupt:
+        print("\n[INFO] Application interrupted by user")
+        zimmer_window.gripper.disconnect()

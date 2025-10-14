@@ -160,7 +160,7 @@ class Zimmer:
 
         self.gripper_force = 50
         self.gripper_velocity = 50
-        self.gripper_max_distance = 4275  # 42.75 mm (Check model max distance)
+        self.gripper_max_distance = 4075  # 40.75 mm (Check model 'Stroke per jaw' + 75mm)
         self.gripper_grip_distance = 0
 
         self.gripper_send_flag = False
@@ -322,7 +322,7 @@ class Zimmer:
         Zimmer Gripper gripping (closing)
 
         Parameters:
-        - grip_distance (int): Grip distance (0 ~ 74) [mm]
+        - grip_distance (int): Grip distance (75 ~ max distance) [mm]
         - sync (bool): Synchronization flag
         """
 
@@ -357,7 +357,7 @@ class Zimmer:
         Zimmer Gripper releasing (opening)
 
         Parameters:
-        - release_distance (int): Release distance (0 ~ 74) [mm]
+        - release_distance (int): Release distance (75 ~ max distance) [mm]
         - sync (bool): Synchronization flag
         """
         if release_distance == -1:
@@ -388,13 +388,13 @@ class Zimmer:
 
     def opt_velocity(self, velocity=50):
         """
-        Zimmer Gripper velocity option
+        Zimmer Gripper velocity option (1~100%)
         """
         self.gripper_velocity = velocity
 
     def opt_force(self, force=50):
         """
-        Zimmer Gripper force option
+        Zimmer Gripper force option (1~100%)
         """
         self.gripper_force = force
 
@@ -411,7 +411,8 @@ class Zimmer:
         Returns:
         - bool: True if gripper is closed, False if gripper is open
         """
-        if self.gripper_grip_distance > self.reg_write[7] - self.reg_write[2]:
-            return False
-        else:
+
+        if self.gripper_grip_flag:
             return True
+        else:
+            return False
