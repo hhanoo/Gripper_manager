@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# KETI Gripper Manager Docker 실행 스크립트
+# Gripper Manager Docker 실행 스크립트
 
 set -e
 
 echo "================================================================="
-echo "KETI Gripper Manager Docker Launcher"
+echo "Gripper Manager Docker Launcher"
 echo "================================================================="
 
 # 프로젝트 이름 정의
-PROJECT_NAME="KETI Gripper Manager"
-SERVICE_NAME="keti-gripper-system"
+PROJECT_NAME="Gripper Manager"
+SERVICE_NAME="gripper-manager"
 
 # Print Function------------------------------------------------------------
 # 색상 정의

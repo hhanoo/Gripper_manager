@@ -27,7 +27,7 @@ Gripper_manager/
 #### 1. Build Docker Image
 
 ```bash
-docker build -t keti:gripper-manager -f Dockerfile .
+docker build -t project:gripper-manager -f Dockerfile .
 ```
 
 #### 2. Run Docker Container using Docker compose

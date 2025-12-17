@@ -1,7 +1,7 @@
 services:
-  keti-gripper-system: # Service Name
-    image: keti:gripper-manager # Image Name
-    container_name: KETI_Gripper_manager # Container Name
+  gripper-manager: # Service Name
+    image: project:gripper-manager # Image Name
+    container_name: Gripper_manager # Container Name
     privileged: true # like --privileged (권한 부여)
     network_mode: host # like --network host (호스트 네트워크)
     stdin_open: true # like -i (표준입력 유지)
