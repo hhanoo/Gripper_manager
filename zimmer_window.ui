@@ -198,7 +198,7 @@
     <property name="checkable">
      <bool>false</bool>
     </property>
-    <layout class="QGridLayout" name="gridLayout_3">
+    <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,1">
      <property name="leftMargin">
       <number>9</number>
      </property>
@@ -218,7 +218,7 @@
          <property name="font">
           <font>
            <family>Ubuntu</family>
-           <pointsize>11</pointsize>
+           <pointsize>10</pointsize>
            <weight>50</weight>
            <bold>false</bold>
           </font>
@@ -236,7 +236,7 @@
          <property name="font">
           <font>
            <family>Ubuntu</family>
-           <pointsize>11</pointsize>
+           <pointsize>10</pointsize>
            <weight>50</weight>
            <bold>false</bold>
           </font>
@@ -254,7 +254,7 @@
          <property name="font">
           <font>
            <family>Ubuntu</family>
-           <pointsize>11</pointsize>
+           <pointsize>10</pointsize>
            <weight>50</weight>
            <bold>false</bold>
           </font>
@@ -272,7 +272,7 @@
          <property name="font">
           <font>
            <family>Ubuntu</family>
-           <pointsize>11</pointsize>
+           <pointsize>10</pointsize>
            <weight>50</weight>
            <bold>false</bold>
           </font>
@@ -290,7 +290,7 @@
          <property name="font">
           <font>
            <family>Ubuntu</family>
-           <pointsize>11</pointsize>
+           <pointsize>10</pointsize>
            <weight>50</weight>
            <bold>false</bold>
           </font>
@@ -393,7 +393,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Current Position : </string>
+          <string>Actual Position : </string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

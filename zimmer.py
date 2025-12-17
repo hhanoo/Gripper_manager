@@ -194,8 +194,8 @@ class Zimmer:
         self.mb = ModbusTcpClient(host=self.ip, port=self.port)
 
         # Zimmer Gripper ------------------------------------------------------------
-        self.ADDR_RECV = 0x0011  #NOTE: Reference 'Input: IO-Link channel' from 'Modbus TCP Memory Map' in Turck documentation
-        self.ADDR_SEND = 0x0811  #NOTE: Reference 'Output: IO-Link channel' from 'Modbus TCP Memory Map' in Turck documentation
+        self.ADDR_RECV = 0x0001  #NOTE: Reference 'Input: IO-Link channel' from 'Modbus TCP Memory Map' in Turck documentation
+        self.ADDR_SEND = 0x0801  #NOTE: Reference 'Output: IO-Link channel' from 'Modbus TCP Memory Map' in Turck documentation
 
         self.reg_read = 0
         self.reg_write = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -210,7 +210,7 @@ class Zimmer:
         self.gripper_WorkPosition = 0
 
         #NOTE: Maximum stroke derived from tooltip gap & Must match gripper spec ('stroke per jaw') with additional 75 mm clearance
-        self.gripper_gap_maximum = (8200 // 2) + 75  # (tooltip gap // 2) = 41.00 mm = max stroke
+        self.gripper_gap_maximum = (8200 // 2) + 100  # (tooltip gap // 2) = 41.00 mm = max stroke
 
         self.gripper_StatusWord = 0
         self.gripper_Diagnosis = 0
@@ -389,8 +389,7 @@ class Zimmer:
             actual_position = self.gripper_gap_maximum
         else:
             # convert gap[mm] to WorkPosition counts [0.01mm] (갭→워크포지션 변환)
-            # actual_position = (74 - grip_distance) / 2 * 100 + 100
-            actual_position = self.gripper_gap_maximum - (jaw_gap / 2) + 100
+            actual_position = self.gripper_gap_maximum - (jaw_gap / 2)
             if actual_position > self.gripper_gap_maximum:
                 actual_position = self.gripper_gap_maximum
 
@@ -430,8 +429,7 @@ class Zimmer:
             actual_position = 100
         else:
             # convert gap[mm] to WorkPosition counts [0.01mm] (갭→워크포지션 변환)
-            # actual_position = (74 - jaw_gap) / 2 * 100 + 150
-            actual_position = self.gripper_gap_maximum - (jaw_gap / 2) - 100
+            actual_position = self.gripper_gap_maximum - (jaw_gap / 2)
             if actual_position < 100:
                 actual_position = 100
 
@@ -468,7 +466,7 @@ class Zimmer:
         - sync (bool): Synchronization flag
         """
         jaw_gap = int(jaw_gap)
-        actual_position = self.gripper_gap_maximum - (jaw_gap / 2) - 100
+        actual_position = self.gripper_gap_maximum - (jaw_gap / 2)
 
         if actual_position < self.gripper_ActualPosition:
             self.release(jaw_gap, sync)

@@ -1,5 +1,7 @@
 import json
 import os
+import signal
+import sys
 import threading
 
 from PySide6.QtCore import QFile, Qt, QTimer
@@ -70,11 +72,11 @@ class ZimmerWindow:
         if self.edit_port and not self.edit_port.text().strip():
             self.edit_port.setText(self.config["port"])
         if self.label_distance_range:
-            max_mm = (self.gripper.gripper_gap_maximum - 75) / 100.0  # counts(0.01mm) -> mm
+            max_mm = (self.gripper.gripper_gap_maximum - 100) / 100.0  # counts(0.01mm) -> mm
             self.label_distance_range.setText(f"[ 0 ~ {max_mm:.2f} ] mm")
         if self.spinBox_jaw_gap:
             self.spinBox_jaw_gap.setValue(int(self.config["jaw_gap"]))
-            self.spinBox_jaw_gap.setRange(100, (self.gripper.gripper_gap_maximum - 75) * 2)
+            self.spinBox_jaw_gap.setRange(100, (self.gripper.gripper_gap_maximum - 100) * 2)
         if self.spinBox_force:
             self.spinBox_force.setValue(int(self.config["force"]))
         if self.spinBox_velocity:
@@ -109,6 +111,18 @@ class ZimmerWindow:
 
         # Initial state text
         self.set_status("IDLE")
+
+    # ------------------- Safe shutdown -------------------
+
+    def shutdown(self):
+        """Safe shutdown sequence"""
+        if hasattr(self, "timer"):
+            self.timer.stop()  # stop timer
+        self.gripper.disconnect()  # disconnect hardware
+
+    def closeEvent(self, event):
+        self.shutdown()
+        event.accept()
 
     # ------------------- Slots -------------------
 
@@ -243,11 +257,13 @@ if __name__ == "__main__":
     # --- Show UI ---
     zimmer_window.window.show()
 
-    # --- Start application ---
-    try:
-        app.exec()
-    except KeyboardInterrupt:
-        print("\n[INFO] Application interrupted by user")
-        zimmer_window.gripper.disconnect()
+    # --- Handle SIGINT ---
+    def handle_sigint(sig, frame):
+        zimmer_window.shutdown()
+        QApplication.quit()
 
-    exit(0)
+    signal.signal(signal.SIGINT, handle_sigint)
+
+    # --- Start application ---
+    zimmer_window.window.show()
+    sys.exit(app.exec())
