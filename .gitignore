@@ -33,3 +33,6 @@ Thumbs.db
 
 # JSON
 *.json
+
+# Docker
+docker/config.sh

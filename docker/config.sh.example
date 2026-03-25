@@ -1,0 +1,5 @@
+# Docker image name (used in build.sh and run.sh)
+IMAGE_NAME="gripper-manager"
+
+# Docker container name (used in run.sh)
+CONTAINER_NAME="gripper-manager"

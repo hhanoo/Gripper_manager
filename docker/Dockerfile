@@ -68,7 +68,7 @@ RUN apt-get clean && apt-get update && apt-get upgrade -y && apt-get install --n
     \
     && rm -rf /var/lib/apt/lists/*
 
-# USB 통신 ------------------------------------------------------------  
+# USB 통신 ------------------------------------------------------------
 RUN apt-get clean && apt-get update && apt-get upgrade -y && apt-get install --no-install-recommends -y \
     libdbus-1-3 \
     libdbus-1-dev \
