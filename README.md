@@ -1,17 +1,21 @@
 # Gripper Manager
 
-**Modbus TCP/IP 기반 그리퍼 제어 시스템**
+**Modbus TCP/IP 및 RTU 기반 산업용 그리퍼 제어 시스템**
 
-[![Python](https://img.shields.io/badge/Python-3.10-blue)](https://www.python.org/)
-[![PySide6](https://img.shields.io/badge/PySide6-Qt6-green)](https://doc.qt.io/qtforpython/)
-[![Modbus](https://img.shields.io/badge/Modbus-TCP/IP-orange)](https://pymodbus.readthedocs.io/)
-[![Docker](https://img.shields.io/badge/Docker-Supported-brightgreen)](docker/)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)]()
+[![PySide6](https://img.shields.io/badge/PySide6-6.10+-41CD52?logo=qt&logoColor=white)]()
+[![Docker](https://img.shields.io/badge/Docker-Supported-2496ED?logo=docker&logoColor=white)]()
+[![License](https://img.shields.io/badge/License-Apache_2.0-orange?logo=opensourceinitiative&logoColor=white)](LICENSE)
+
+---
 
 ## 목차
 
 - [데모](#데모)
 - [개요](#개요)
 - [주요 기능](#주요-기능)
+- [시스템 구조](#시스템-구조)
+- [프로젝트 구조](#프로젝트-구조)
 - [빠른 시작](#빠른-시작)
 - [시스템 요구사항](#시스템-요구사항)
 - [설치](#설치)
@@ -20,72 +24,24 @@
 - [설정](#설정)
 - [문제 해결](#문제-해결)
 - [라이선스](#라이선스)
+- [Maintainer](#maintainer)
 
 ---
 
 ## 데모
 
-### 시스템 구조
+<details>
+<summary>데모 보기</summary>
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                    Gripper Manager System                         │
-└──────────────────────────────────────────────────────────────────┘
+### Zimmer 그리퍼 GUI
 
-    Industrial Gripper (Zimmer / KORAS)
-              │
-              │ Modbus TCP/IP
-              ▼
-    ┌──────────────────────┐
-    │ Gripper Control      │ (Python)
-    │ - Modbus TCP Client  │
-    │ - Handshake Protocol │
-    │ - Position Feedback  │
-    └──────────┬───────────┘
-               │
-               ▼
-    ┌──────────────────────┐
-    │ GUI Application      │ (PySide6)
-    │ - Connection Mgmt    │
-    │ - Real-time Control  │
-    │ - Position Monitor   │
-    └──────────────────────┘
-```
+![Zimmer GUI](docs/zimmer_gui.png)
 
-### 프로젝트 구조
+### KORAS 그리퍼 GUI
 
-```
-Gripper_manager/
-├── zimmer.py                       # Zimmer 그리퍼 제어 모듈
-├── zimmer_window.py                # Zimmer GUI 애플리케이션
-├── zimmer_window.ui                # Zimmer GUI 레이아웃 (Qt Designer)
-├── koras.py                        # KORAS 그리퍼 제어 모듈
-├── koras_window.py                 # KORAS GUI 애플리케이션
-├── koras_window.ui                 # KORAS GUI 레이아웃 (Qt Designer)
-├── console_colors.py               # 터미널 출력 색상 상수
-├── pyproject.toml                  # Python 프로젝트 설정
-├── uv.lock                         # uv 의존성 잠금 파일
-├── docker/                         # Docker 지원
-│   ├── Dockerfile                  # Docker 이미지 빌드 설정
-│   ├── build.sh                    # Docker 이미지 빌드 스크립트
-│   ├── run.sh                      # Docker 컨테이너 실행 스크립트
-│   ├── config.sh                   # Docker 설정 (이미지/컨테이너 이름)
-│   └── config.sh.example           # Docker 설정 템플릿
-├── docs/                           # 문서 및 스크린샷
-│   ├── zimmer_gui.png
-│   └── koras_gui.png
-└── README.md
-```
+![KORAS GUI](docs/koras_gui.png)
 
-### 스크린샷
-
-- Zimmer GUI
-
-  ![Zimmer GUI](docs/zimmer_gui.png)
-
-- KORAS GUI
-
-  ![KORAS GUI](docs/koras_gui.png)
+</details>
 
 ---
 
@@ -93,33 +49,92 @@ Gripper_manager/
 
 ### 프로젝트 목적
 
-Gripper Manager는 산업용 그리퍼를 Modbus TCP/IP 프로토콜로 제어하는 GUI 기반 시스템입니다. Zimmer 그리퍼와 KORAS 그리퍼를 지원하며, PySide6 기반의 직관적인 인터페이스를 통해 실시간 그리퍼 제어 및 모니터링을 제공합니다.
+다양한 산업용 그리퍼를 Modbus 프로토콜로 통합 제어하는 PySide6 기반 GUI 애플리케이션입니다. 그리퍼의 위치, 힘, 속도를 실시간으로 제어하고 상태를 모니터링할 수 있습니다.
 
 ### 주요 구성요소
 
-- **zimmer.py / zimmer_window.py**: Zimmer 그리퍼 제어 모듈 및 GUI (2-finger / 3-finger 지원)
-- **koras.py / koras_window.py**: KORAS 그리퍼 제어 모듈 및 GUI
-- **console_colors.py**: 터미널 컬러 출력 유틸리티
+- **zimmer.py / zimmer_window.py** (Python): Zimmer 2/3핑거 그리퍼 Modbus TCP/IP 제어 모듈 및 GUI
+- **koras.py / koras_window.py** (Python): KORAS 모터 구동 그리퍼 Modbus RTU 제어 모듈 및 GUI
+- **egh.py** (Python): SCHUNK EGH IO-Link 그리퍼 Modbus TCP/IP 어댑터 제어 (CLI)
 
 ### 적용 가능 영역
 
-- 산업용 로봇 그리퍼 제어
-- 자동화 시스템의 그리퍼 통합
+- 산업용 로봇 그리퍼 제어 및 자동화
 - 그리퍼 테스트 및 디버깅
-- 연구 개발 및 교육
+- 연구개발 및 교육
 
 ---
 
 ## 주요 기능
 
-- **그리퍼 연결/해제** - Modbus TCP/IP 기반 통신 연결 및 관리
-- **Zimmer 그리퍼 제어** - 2-finger 및 3-finger Zimmer 그리퍼 지원
-- **실시간 제어** - Grip/Release 동작 및 포지션 피드백
-- **위치 모니터링** - 실시간 그리퍼 조 간격(jaw position) 표시
-- **힘 및 속도 제어** - 그리퍼 힘(Force)과 이동 속도(Velocity) 조절
-- **다단계 통신** - 안정적인 동작을 위한 핸드셰이크 프로토콜
-- **GUI 인터페이스** - PySide6 기반 직관적인 제어 인터페이스
-- **Docker 지원** - 빌드 및 실행 스크립트 포함, 원클릭 컨테이너 환경
+- **Zimmer 그리퍼 제어**: GEH6060IL, GEH6040IL (2핑거) / GED6060IL, GED6040IL (3핑거) 지원, 8단계 핸드셰이크 프로토콜
+- **KORAS 그리퍼 제어**: Modbus RTU 시리얼 통신 기반 모터 구동 그리퍼, 진공 그리퍼 지원
+- **SCHUNK EGH 제어**: IO-Link 마스터를 통한 Modbus TCP/IP 어댑터 기반 제어 (CLI)
+- **실시간 GUI 모니터링**: PySide6 기반 위치/상태 실시간 표시 (100ms 갱신)
+- **위치/힘/속도 제어**: 세밀한 파라미터 조정 (위치 0.01mm 단위, 힘/속도 0-100%)
+- **진단 기능**: 상태 워드 시각화, 에러 코드 및 진단 메시지 표시
+- **Docker 지원**: 빌드 및 실행 스크립트 포함, 원클릭 컨테이너 환경
+
+---
+
+## 시스템 구조
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      PySide6 GUI Layer                      │
+│  ┌──────────────────┐  ┌──────────────────┐                 │
+│  │  zimmer_window   │  │  koras_window    │                 │
+│  └────────┬─────────┘  └────────┬─────────┘                 │
+└───────────┼──────────────────────┼──────────────────────────┘
+            │                      │
+┌───────────┼──────────────────────┼──────────────────────────┐
+│           ▼                      ▼              Python      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
+│  │   zimmer.py  │  │   koras.py   │  │    egh.py    │       │
+│  │   (TCP/IP)   │  │    (RTU)     │  │   (TCP/IP)   │       │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘       │
+└─────────┼──────────────────┼─────────────────┼──────────────┘
+          │                  │                 │
+  ┌───────▼───────┐  ┌──────▼──────┐  ┌───────▼───────┐
+  │ Modbus TCP/IP │  │ Modbus RTU  │  │ Modbus TCP/IP │
+  │  (Ethernet)   │  │ (USB Serial)│  │  (Ethernet)   │
+  └───────┬───────┘  └──────┬──────┘  └───────┬───────┘
+          │                  │                 │
+  ┌───────▼───────┐  ┌──────▼──────┐  ┌───────▼───────┐
+  │ Zimmer Gripper│  │KORAS Gripper│  │ IO-Link Master│
+  │ (2/3-Finger)  │  │   (Motor)   │  │ → SCHUNK EGH  │
+  └───────────────┘  └─────────────┘  └───────────────┘
+```
+
+---
+
+## 프로젝트 구조
+
+```
+Gripper_manager/
+├── zimmer.py              # Zimmer 그리퍼 Modbus TCP/IP 제어 모듈
+├── zimmer_window.py       # Zimmer 그리퍼 GUI 애플리케이션
+├── zimmer_window.ui       # Zimmer GUI 레이아웃 (Qt Designer)
+├── zimmer_config.json     # Zimmer 연결 설정 (자동 생성)
+├── koras.py               # KORAS 그리퍼 Modbus RTU 제어 모듈
+├── koras_window.py        # KORAS 그리퍼 GUI 애플리케이션
+├── koras_window.ui        # KORAS GUI 레이아웃 (Qt Designer)
+├── egh.py                 # SCHUNK EGH IO-Link 그리퍼 제어 (CLI)
+├── console_colors.py      # 터미널 출력 색상 상수
+├── pyproject.toml         # Python 프로젝트 설정
+├── uv.lock                # uv 의존성 잠금 파일
+├── .python-version        # Python 버전 지정 (3.10)
+├── docker/
+│   ├── Dockerfile         # Docker 이미지 빌드 설정
+│   ├── build.sh           # Docker 이미지 빌드 스크립트
+│   ├── run.sh             # Docker 컨테이너 실행 스크립트
+│   ├── config.sh          # Docker 설정 (이미지/컨테이너 이름)
+│   └── config.sh.example  # Docker 설정 템플릿
+├── docs/
+│   ├── zimmer_gui.png     # Zimmer GUI 스크린샷
+│   └── koras_gui.png      # KORAS GUI 스크린샷
+└── README.md
+```
 
 ---
 
@@ -128,36 +143,32 @@ Gripper Manager는 산업용 그리퍼를 Modbus TCP/IP 프로토콜로 제어�
 ### Option 1: Docker (권장)
 
 ```bash
-# 1. 저장소 클론
-git clone https://github.com/hhanoo/Gripper_manager.git ~/Gripper_manager
-cd ~/Gripper_manager
+# 0. 프로젝트 루트로 이동
+cd Gripper_manager/docker
 
-# 2. Docker 이미지 빌드
-cd docker
+# 1. Docker 이미지 빌드
 ./build.sh
 
-# 3. Docker 컨테이너 실행
+# 2. 컨테이너 실행 (X11 포워딩 포함)
 ./run.sh
 
-# 4. 컨테이너 내에서 애플리케이션 실행
-python3 zimmer_window.py    # Zimmer 그리퍼
-python3 koras_window.py     # KORAS 그리퍼
+# 3. 컨테이너 내부에서 실행
+python3 zimmer_window.py    # Zimmer 그리퍼 GUI
+python3 koras_window.py     # KORAS 그리퍼 GUI
 ```
 
-### Option 2: Native Installation
+### Option 2: Native
 
 ```bash
-# 1. 저장소 클론
-git clone https://github.com/hhanoo/Gripper_manager.git ~/Gripper_manager
-cd ~/Gripper_manager
+# 0. 프로젝트 루트로 이동
+cd Gripper_manager
 
-# 2. 의존성 설치 (uv 사용)
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# 1. 의존성 설치 (uv 사용)
 uv sync --frozen
 
-# 3. 실행
-uv run python zimmer_window.py
-uv run python koras_window.py
+# 2. 실행
+uv run python zimmer_window.py    # Zimmer 그리퍼 GUI
+uv run python koras_window.py     # KORAS 그리퍼 GUI
 ```
 
 ---
@@ -166,18 +177,24 @@ uv run python koras_window.py
 
 ### 필수
 
-- **OS**: Ubuntu 22.04 LTS (또는 호환 Linux)
-- **Python**: 3.10+
+| 항목 | 요구사항              |
+| ---- | --------------------- |
+| OS   | Ubuntu 20.04+ (Linux) |
+| 언어 | Python 3.10+          |
 
 ### 하드웨어
 
-- **네트워크**: 그리퍼와 통신 가능한 Ethernet 연결
-- **그리퍼**: Zimmer 또는 KORAS 그리퍼 (Modbus TCP/IP 지원)
+| 항목              | 사양         | 비고             |
+| ----------------- | ------------ | ---------------- |
+| Ethernet          | 100Mbps 이상 | Zimmer, EGH 연결 |
+| USB 시리얼 어댑터 | /dev/ttyUSB0 | KORAS 연결       |
 
-### 소프트웨어 의존성
+### 외부 패키지
 
-- **PySide6**: Qt6 기반 GUI 프레임워크
-- **pymodbus 3.6.9**: Modbus TCP/IP 통신 라이브러리
+| 패키지   | 버전    | 용도                    |
+| -------- | ------- | ----------------------- |
+| pymodbus | 3.6.9   | Modbus TCP/IP, RTU 통신 |
+| PySide6  | 6.10.0+ | Qt6 GUI 프레임워크      |
 
 ---
 
@@ -185,125 +202,121 @@ uv run python koras_window.py
 
 ### Method 1: Docker (권장)
 
-Docker를 사용하면 모든 의존성이 자동으로 설치됩니다:
-
 ```bash
-cd ~/Gripper_manager/docker
+# 0. 프로젝트 루트로 이동
+cd Gripper_manager/docker
+
+# 1. 설정 파일 생성
+cp config.sh.example config.sh
+
+# 2. Docker 이미지 빌드
 ./build.sh
+
+# 3. 컨테이너 실행
+./run.sh
 ```
 
-빌드 완료 후 `./run.sh`로 컨테이너를 실행하면 모든 환경이 준비됩니다.
+### Method 2: Native
 
-> **Docker 설정 변경**: [docker/config.sh](docker/config.sh)에서 이미지 이름, 컨테이너 이름을 변경할 수 있습니다. 최초 실행 시 `config.sh.example`에서 자동 복사됩니다.
-
-### Method 2: uv (가상환경)
+#### 1. 저장소 클론
 
 ```bash
-# uv 설치
+git clone <repository-url>
+cd Gripper_manager
+```
+
+#### 2. uv 설치 (미설치 시)
+
+```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# 의존성 설치 (자동으로 .venv 생성)
-cd ~/Gripper_manager
-uv sync --frozen
 ```
 
-> **NOTE:** `.venv` 디렉토리가 자동 생성되며 `pyproject.toml` / `uv.lock` 기반으로 의존성이 설치됩니다.
-
-> **VSCode 설정**: `python.defaultInterpreterPath`를 `${workspaceFolder}/.venv/bin/python`으로 설정하세요.
-
-### Method 3: pip (글로벌)
+#### 3. 의존성 설치
 
 ```bash
-pip install --upgrade pip
-pip install PySide6
-pip install pymodbus==3.6.9
+uv sync --frozen
 ```
 
 ---
 
 ## 실행
 
-### Docker
+### Zimmer 그리퍼 GUI
 
 ```bash
-# 1. Docker 컨테이너 실행
-cd ~/Gripper_manager/docker
-./run.sh
+# Docker 컨테이너 내부
+python3 zimmer_window.py
 
-# 2. 컨테이너 내에서 애플리케이션 실행
-python3 zimmer_window.py    # Zimmer 그리퍼
-python3 koras_window.py     # KORAS 그리퍼
+# Native (uv)
+uv run python zimmer_window.py
 ```
 
-### Native (uv)
+### KORAS 그리퍼 GUI
 
 ```bash
-cd ~/Gripper_manager
+# Docker 컨테이너 내부
+python3 koras_window.py
 
-# Zimmer 그리퍼
-uv run python zimmer_window.py
-
-# KORAS 그리퍼
+# Native (uv)
 uv run python koras_window.py
 ```
 
-### Native (직접 실행)
+### SCHUNK EGH (CLI)
 
 ```bash
-cd ~/Gripper_manager
+# 초기화
+python3 egh.py --ip 192.168.3.113 --port 502 --action init
 
-python3 zimmer_window.py
-python3 koras_window.py
+# 그립 (폭 0%)
+python3 egh.py --ip 192.168.3.113 --action grip --width 0
+
+# 릴리즈 (폭 100%)
+python3 egh.py --ip 192.168.3.113 --action release --width 100
+
+# 상태 확인
+python3 egh.py --ip 192.168.3.113 --action status
 ```
 
 ---
 
 ## 사용법
 
-### Basic Workflow
+### Zimmer 그리퍼
 
-1. **그리퍼 네트워크 확인**
+```
+네트워크 확인 ─────▶ GUI 실행 ─────▶ 연결 ─────▶ 제어
+      │                  │              │            │
+ ping 확인        zimmer_window    IP/Port 입력   Init/Open/Close
+```
 
-   ```bash
-   # 그리퍼 IP 접근 가능 여부 확인
-   ping 192.168.3.112
-   ```
+1. 그리퍼 네트워크 연결 확인: `ping 192.168.3.112`
+2. `zimmer_window.py` 실행
+3. IP (`192.168.3.112`), Port (`502`) 입력 후 Connect
+4. Init 버튼으로 초기화 (홈잉)
+5. Open/Close 또는 Jaw Gap 입력 후 Custom Position으로 제어
+6. Force/Velocity 슬라이더로 파라미터 조정
 
-2. **애플리케이션 실행**
+### KORAS 그리퍼
 
-   ```bash
-   # Zimmer 그리퍼 GUI 실행
-   uv run python zimmer_window.py
-   ```
+```
+시리얼 포트 확인 ──▶ GUI 실행 ─────▶ 연결 ─────▶ 제어
+      │                  │              │            │
+ ls /dev/ttyUSB*   koras_window    포트/모드 선택  Open/Close
+```
 
-3. **연결 설정**
-   - GUI에서 그리퍼 IP 및 포트 입력
-   - Connect 버튼으로 Modbus TCP 연결
-
-4. **그리퍼 제어**
-   - Grip / Release 버튼으로 동작 제어
-   - Force / Velocity 슬라이더로 힘과 속도 조절
-   - 실시간 Jaw Position 모니터링
+1. 시리얼 포트 확인: `ls /dev/ttyUSB*`
+2. 포트 권한 설정 (필요 시): `sudo chmod 666 /dev/ttyUSB0`
+3. `koras_window.py` 실행
+4. 시리얼 포트 입력, 그리퍼/진공 모드 선택 후 연결
+5. Open/Close 버튼으로 제어, Velocity/Force 설정
 
 ---
 
 ## 설정
 
-### Docker 설정
+### zimmer_config.json
 
-[docker/config.sh](docker/config.sh) 편집:
-
-```bash
-# Docker image name (used in build.sh and run.sh)
-IMAGE_NAME="project:gripper-manager"
-
-# Docker container name (used in run.sh)
-CONTAINER_NAME="Gripper_manager"
-```
-
-### 그리퍼 연결 설정
-
-그리퍼 연결 정보는 GUI에서 설정하며, `zimmer_config.json`에 자동 저장됩니다:
+Zimmer GUI 연결 설정이 자동 저장됩니다.
 
 ```json
 {
@@ -315,66 +328,125 @@ CONTAINER_NAME="Gripper_manager"
 }
 ```
 
-### 주요 파라미터 설명
+| 파라미터 | 기본값        | 설명                  |
+| -------- | ------------- | --------------------- |
+| ip       | 192.168.3.112 | 그리퍼 IP 주소        |
+| port     | 502           | Modbus TCP 포트       |
+| jaw_gap  | 4300          | 조 간격 (0.01mm 단위) |
+| velocity | 50            | 구동 속도 (0-100%)    |
+| force    | 50            | 그립 힘 (0-100%)      |
 
-| Parameter  | Type   | Default         | Description                |
-| ---------- | ------ | --------------- | -------------------------- |
-| `ip`       | string | `192.168.3.112` | 그리퍼 IP 주소             |
-| `port`     | string | `502`           | Modbus TCP 포트 (기본 502) |
-| `jaw_gap`  | string | `4300`          | 그리퍼 조 간격 설정값      |
-| `velocity` | string | `50`            | 그리퍼 이동 속도 (0-100%)  |
-| `force`    | string | `50`            | 그리퍼 힘 (0-100%)         |
+### KORAS 시리얼 설정
+
+| 파라미터  | 기본값       | 설명               |
+| --------- | ------------ | ------------------ |
+| port      | /dev/ttyUSB0 | 시리얼 포트        |
+| baudrate  | 38400        | 통신 속도 (bps)    |
+| data bits | 8            | 데이터 비트        |
+| stop bits | 1            | 스톱 비트          |
+| parity    | None         | 패리티             |
+| slave_id  | 1            | Modbus 슬레이브 ID |
+
+### Docker 설정
+
+[config.sh](docker/config.sh.example)
+
+```bash
+IMAGE_NAME="gripper-manager"       # Docker 이미지 이름
+CONTAINER_NAME="gripper-manager"   # Docker 컨테이너 이름
+```
 
 ---
 
 ## 문제 해결
 
-### 1. 연결 문제
+### 1. Zimmer/EGH 그리퍼 연결 실패
 
-#### 1-1. Problem: "그리퍼에 연결할 수 없습니다"
+증상:
 
-**Solution:**
+```
+Connection refused / Timeout
+```
+
+해결:
 
 ```bash
 # 네트워크 연결 확인
 ping 192.168.3.112
 
-# Modbus 포트 접근 확인
+# Modbus 포트 확인
 nc -zv 192.168.3.112 502
 
 # 방화벽 확인
 sudo ufw status
 ```
 
-- 그리퍼 전원이 켜져 있는지 확인
-- Ethernet 케이블 연결 상태 확인
-- 같은 네트워크 대역에 있는지 확인
+### 2. KORAS 시리얼 포트를 찾을 수 없음
 
-#### 1-2. Problem: "Modbus 통신 타임아웃"
+증상:
 
-**Solution:**
+```
+/dev/ttyUSB0: No such file or directory
+```
 
-- 그리퍼 IP 및 포트 번호 재확인
-- 다른 프로그램이 같은 포트를 사용하고 있지 않은지 확인
-- 그리퍼 재부팅 후 재시도
-
-### 2. GUI 문제
-
-#### 2-1. Problem: "Docker에서 GUI 창이 표시되지 않음"
-
-**Solution:**
+해결:
 
 ```bash
-# X11 포워딩 활성화
+# USB 장치 확인
+ls /dev/ttyUSB*
+
+# USB 연결 로그 확인
+dmesg | tail -20
+```
+
+### 3. KORAS 시리얼 포트 권한 오류
+
+증상:
+
+```
+Permission denied: '/dev/ttyUSB0'
+```
+
+해결:
+
+```bash
+# 임시 해결
+sudo chmod 666 /dev/ttyUSB0
+
+# 영구 해결 (dialout 그룹 추가 후 재로그인)
+sudo usermod -aG dialout $USER
+```
+
+### 4. Docker에서 GUI가 표시되지 않음
+
+증상:
+
+```
+qt.qpa.xcb: could not connect to display
+```
+
+해결:
+
+```bash
+# X11 포워딩 허용
 xhost +local:docker
 
 # DISPLAY 환경변수 확인
 echo $DISPLAY
+
+# run.sh 사용 (자동 X11 설정 포함)
+cd docker && ./run.sh
 ```
 
-#### 2-2. Problem: "PySide6 xcb plugin 오류"
+### 5. PySide6 xcb plugin 오류
 
-**Solution:**
+증상:
+
+```
+qt.qpa.plugin: Could not load the Qt platform plugin "xcb"
+```
+
+해결:
 
 ```bash
 # 필요한 XCB 라이브러리 설치 (Docker 외부 실행 시)
@@ -384,29 +456,30 @@ sudo apt install -y \
   libxkbcommon-x11-0
 ```
 
-### 3. 설치 문제
+### 6. Docker 컨테이너에서 디바이스 접근 불가
 
-#### 3-1. Problem: "PySide6 설치 실패"
+증상:
 
-```bash
-# pip 업그레이드 후 재설치
-pip install --upgrade pip setuptools wheel
-pip install PySide6
+```
+Failed to open /dev/ttyUSB0
 ```
 
-#### 3-2. Problem: "pymodbus 버전 호환 문제"
+해결:
 
 ```bash
-# 정확한 버전 설치
-pip install pymodbus==3.6.9
+# run.sh는 --privileged 및 -v /dev:/dev:rw 옵션 포함
+# 수동 실행 시 해당 옵션 추가 필요
+docker run --privileged -v /dev:/dev:rw ...
 ```
 
 ---
 
-## 라이센스
+## 라이선스
 
-TBD
+이 프로젝트는 Apache License 2.0으로 배포됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
 
 ---
 
-**Maintainer**: hhanoo (woo980711@gmail.com)
+## Maintainer
+
+hhanoo (woo980711@gmail.com)
