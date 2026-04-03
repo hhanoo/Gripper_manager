@@ -143,13 +143,11 @@ Gripper_manager/
 ### Option 1: Docker (권장)
 
 ```bash
-# 0. 프로젝트 루트로 이동
-cd Gripper_manager/docker
-
-# 1. Docker 이미지 빌드
-./build.sh
+# 1. Docker 이미지 가져오기
+docker pull hhanoo/project:gripper-manager
 
 # 2. 컨테이너 실행 (X11 포워딩 포함)
+cd Gripper_manager/docker
 ./run.sh
 
 # 3. 컨테이너 내부에서 실행
@@ -203,11 +201,24 @@ uv run python koras_window.py     # KORAS 그리퍼 GUI
 ### Method 1: Docker (권장)
 
 ```bash
+# 1. Docker 이미지 가져오기
+docker pull hhanoo/project:gripper-manager
+
+# 2. 컨테이너 실행
+cd Gripper_manager/docker
+./run.sh
+```
+
+<details>
+<summary>직접 빌드 (개발자용)</summary>
+
+```bash
 # 0. 프로젝트 루트로 이동
 cd Gripper_manager/docker
 
-# 1. 설정 파일 생성
+# 1. 설정 파일 생성 후 IMAGE_NAME을 로컬 이름으로 변경
 cp config.sh.example config.sh
+# config.sh에서 IMAGE_NAME="gripper-manager" 로 수정
 
 # 2. Docker 이미지 빌드
 ./build.sh
@@ -215,6 +226,8 @@ cp config.sh.example config.sh
 # 3. 컨테이너 실행
 ./run.sh
 ```
+
+</details>
 
 ### Method 2: Native
 
@@ -352,9 +365,12 @@ Zimmer GUI 연결 설정이 자동 저장됩니다.
 [config.sh](docker/config.sh.example)
 
 ```bash
-IMAGE_NAME="gripper-manager"       # Docker 이미지 이름
-CONTAINER_NAME="gripper-manager"   # Docker 컨테이너 이름
+IMAGE_NAME="hhanoo/project:gripper-manager"  # Docker Hub 이미지 (기본값)
+CONTAINER_NAME="gripper-manager"             # Docker 컨테이너 이름
 ```
+
+> `run.sh` 실행 전 `docker pull hhanoo/project:gripper-manager`로 이미지를 가져오세요.  
+> 직접 빌드하려면 `IMAGE_NAME`을 `"gripper-manager"` 등으로 변경 후 `./build.sh`를 실행하세요.
 
 ---
 
