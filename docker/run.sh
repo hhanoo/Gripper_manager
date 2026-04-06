@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Get workspace root directory
+# Directories & Variables
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
@@ -11,7 +11,7 @@ fi
 source "$SCRIPT_DIR/config.sh"
 
 # Check if the image exists
-if ! docker image inspect $IMAGE_NAME > /dev/null 2>&1; then
+if ! docker image inspect "$IMAGE_NAME" > /dev/null 2>&1; then
     echo "Error: Image $IMAGE_NAME not found."
     echo "Pull the image first: docker pull $IMAGE_NAME"
     echo "Or build locally: ./build.sh"
@@ -25,17 +25,27 @@ xhost +local:docker
 # Run the Docker container
 echo "Running Docker container from image: $IMAGE_NAME..."
 docker run -it --rm \
+    --name "$CONTAINER_NAME" \
     --privileged \
     --network host \
-    -e DISPLAY=$DISPLAY \
+    --ipc=host \
+    \
+    -e DISPLAY="$DISPLAY" \
     -e QT_X11_NO_MITSHM=1 \
     -e LIBGL_ALWAYS_INDIRECT=1 \
-    -v /tmp/.X11-unix:/tmp/.X11-unix \
-    -v /dev:/dev:rw \
+    \
     -v $PROJECT_ROOT:/workspace/Gripper_manager \
+    -v /dev:/dev \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -v /etc/localtime:/etc/localtime:ro \
+    \
     -w /workspace/Gripper_manager \
-    --name $CONTAINER_NAME \
-    $IMAGE_NAME
+    \
+    "$IMAGE_NAME"
+
+# Fix file ownership after container exit
+echo "Restoring file ownership..."
+sudo chown -R "$(id -u):$(id -g)" "$PROJECT_ROOT"
 
 # Disable X11 access after container exit
 echo "Disabling X11 access after container exit..."
