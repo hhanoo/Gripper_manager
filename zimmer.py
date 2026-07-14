@@ -72,7 +72,6 @@ from pymodbus.client import ModbusTcpClient
 
 from console_colors import BLUE, GREEN, NC, RED, YELLOW
 
-
 # ------------------------------ constants (상수) ------------------------------
 # yapf: disable
 class ControlWord:
@@ -186,7 +185,7 @@ class Zimmer:
         # yapf: enable
 
         # Zimmer connection variables
-        self.ip = ''
+        self.ip = ""
         self.port = 0
         self.connected = False
 
@@ -194,8 +193,8 @@ class Zimmer:
         self.mb = ModbusTcpClient(host=self.ip, port=self.port)
 
         # Zimmer Gripper ------------------------------------------------------------
-        self.ADDR_RECV = 0x0001  #NOTE: Reference 'Input: IO-Link channel' from 'Modbus TCP Memory Map' in Turck documentation
-        self.ADDR_SEND = 0x0801  #NOTE: Reference 'Output: IO-Link channel' from 'Modbus TCP Memory Map' in Turck documentation
+        self.ADDR_RECV = 0x0001  # NOTE: Reference 'Input: IO-Link channel' from 'Modbus TCP Memory Map' in Turck documentation
+        self.ADDR_SEND = 0x0801  # NOTE: Reference 'Output: IO-Link channel' from 'Modbus TCP Memory Map' in Turck documentation
 
         self.reg_read = 0
         self.reg_write = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -209,8 +208,10 @@ class Zimmer:
         self.gripper_ShiftPosition = 0
         self.gripper_WorkPosition = 0
 
-        #NOTE: Maximum stroke derived from tooltip gap & Must match gripper spec ('stroke per jaw') with additional 75 mm clearance
-        self.gripper_gap_maximum = (8200 // 2) + 100  # (tooltip gap // 2) = 41.00 mm = max stroke
+        # NOTE: Maximum stroke derived from tooltip gap & Must match gripper spec ('stroke per jaw') with additional 75 mm clearance
+        self.gripper_gap_maximum = (
+            8200 // 2
+        ) + 100  # (tooltip gap // 2) = 41.00 mm = max stroke
 
         self.gripper_StatusWord = 0
         self.gripper_Diagnosis = 0
@@ -222,7 +223,7 @@ class Zimmer:
         self.gripper_move_to_work_flag = False
 
     # ---------------- Connection ----------------
-    def connect(self, ip='192.168.3.112', port=502):
+    def connect(self, ip="192.168.3.112", port=502):
         """
         Connect to the Zimmer Gripper
 
@@ -238,12 +239,12 @@ class Zimmer:
         self.connected = self.mb.connect()
 
         if self.connected is True:
-            print(f'{GREEN}[SUCCESS]{NC} Connected gripper')
+            print(f"{GREEN}[SUCCESS]{NC} Connected gripper")
             self.gripper_thread = threading.Thread(target=self.communication_func)
             self.gripper_thread.daemon = True
             self.gripper_thread.start()
         else:
-            print(f'{RED}[ERROR]{NC} Not connected gripper')
+            print(f"{RED}[ERROR]{NC} Not connected gripper")
             exit(1)
 
     def disconnect(self):
@@ -256,7 +257,7 @@ class Zimmer:
         self.gripper_thread_run = False
         self.mb.close()
         self.connected = False
-        print(f'{GREEN}[SUCCESS]{NC} Disconnected gripper')
+        print(f"{GREEN}[SUCCESS]{NC} Disconnected gripper")
 
     # ---------------- Communication ----------------
     def communication_func(self):
@@ -267,7 +268,9 @@ class Zimmer:
 
         while self.gripper_thread_run is True and self.connected is True:
             # read input registers (입력 레지스터 읽기)
-            self.reg_read = self.mb.read_input_registers(self.ADDR_RECV, count=self.NUM_RECV_REG, slave=16)
+            self.reg_read = self.mb.read_input_registers(
+                self.ADDR_RECV, count=self.NUM_RECV_REG, slave=16
+            )
             self.gripper_StatusWord = self.reg_read.registers[0]
             self.gripper_Diagnosis = self.reg_read.registers[1]
             self.gripper_ActualPosition = self.reg_read.registers[2]
@@ -276,33 +279,46 @@ class Zimmer:
                 # 0. PLC active bit check
                 if self.gripper_comm_step == 0:
                     if bool(self.reg_read.registers[0] & self.PLCActive) is True:
-                        print(f"\n{YELLOW}[ ZIMMER ]{NC} 0. PLC active bit check complete")
+                        print(
+                            f"\n{YELLOW}[ ZIMMER ]{NC} 0. PLC active bit check complete"
+                        )
                         self.mb.write_registers(self.ADDR_SEND, self.reg_write)
                         self.gripper_comm_step += 1
 
                 # 1. Data transfer ok bit & motor on bit check
                 elif self.gripper_comm_step == 1:
-                    if bool(self.reg_read.registers[0] & self.DataTransferOK) is True \
-                            and bool(self.reg_read.registers[0] & self.MotorOn) is True:
-                        print(f"{YELLOW}[ ZIMMER ]{NC} 1. Data transfer ok bit & motor on bit check complete")
+                    if (
+                        bool(self.reg_read.registers[0] & self.DataTransferOK) is True
+                        and bool(self.reg_read.registers[0] & self.MotorOn) is True
+                    ):
+                        print(
+                            f"{YELLOW}[ ZIMMER ]{NC} 1. Data transfer ok bit & motor on bit check complete"
+                        )
                         self.reg_write[0] = 0
                         self.mb.write_registers(self.ADDR_SEND, self.reg_write)
                         self.gripper_comm_step += 1
 
                 # 2. Handshake
                 elif self.gripper_comm_step == 2:
-                    if bool(self.reg_read.registers[0] & self.DataTransferOK) is not True:
+                    if (
+                        bool(self.reg_read.registers[0] & self.DataTransferOK)
+                        is not True
+                    ):
                         print(f"{YELLOW}[ ZIMMER ]{NC} 2. Handshake is done")
                         # re-arm data transfer with a specific device mode (특정 모드로 재전송)
                         self.reg_write[0] = ControlWord.DataTransfer
-                        self.reg_write[1] = (85 << 8) | 0  # NOTE: vendor-specific mode 85 (제조사 모드 85 가정)
+                        self.reg_write[1] = (
+                            85 << 8
+                        ) | 0  # NOTE: vendor-specific mode 85 (제조사 모드 85 가정)
                         self.mb.write_registers(self.ADDR_SEND, self.reg_write)
                         self.gripper_comm_step += 1
 
                 # 3. Data transfer ok bit check
                 elif self.gripper_comm_step == 3:
                     if bool(self.reg_read.registers[0] & self.DataTransferOK) is True:
-                        print(f"{YELLOW}[ ZIMMER ]{NC} 3. Data transfer ok bit check complete")
+                        print(
+                            f"{YELLOW}[ ZIMMER ]{NC} 3. Data transfer ok bit check complete"
+                        )
                         self.reg_write[0] = 0
                         self.mb.write_registers(self.ADDR_SEND, self.reg_write)
                         self.gripper_comm_step += 1
@@ -310,13 +326,23 @@ class Zimmer:
 
                 # 4. Grip move to workposition/baseposition
                 elif self.gripper_comm_step == 4:
-                    if bool(self.reg_read.registers[0] & self.DataTransferOK) is not True:
+                    if (
+                        bool(self.reg_read.registers[0] & self.DataTransferOK)
+                        is not True
+                    ):
                         if self.gripper_move_to_work_flag is True:
-                            print(f"{YELLOW}[ ZIMMER ]{NC} 4. Grip move to workposition")
+                            print(
+                                f"{YELLOW}[ ZIMMER ]{NC} 4. Grip move to workposition"
+                            )
                             self.reg_write[0] = ControlWord.MoveToWork
                         else:
-                            if bool(self.reg_read.registers[0] & self.AtBaseposition) is not True:
-                                print(f"{YELLOW}[ ZIMMER ]{NC} 4. Grip move to baseposition")
+                            if (
+                                bool(self.reg_read.registers[0] & self.AtBaseposition)
+                                is not True
+                            ):
+                                print(
+                                    f"{YELLOW}[ ZIMMER ]{NC} 4. Grip move to baseposition"
+                                )
                                 self.reg_write[0] = ControlWord.MoveToBase
 
                         self.mb.write_registers(self.ADDR_SEND, self.reg_write)
@@ -324,15 +350,21 @@ class Zimmer:
 
                 # 5. Grip move complete check
                 elif self.gripper_comm_step == 5:
-                    if bool(self.reg_read.registers[0] & self.InMotion) is True \
-                            and bool(self.reg_read.registers[0] & self.MovementComplete) is not True:
+                    if (
+                        bool(self.reg_read.registers[0] & self.InMotion) is True
+                        and bool(self.reg_read.registers[0] & self.MovementComplete)
+                        is not True
+                    ):
                         print(f"{YELLOW}[ ZIMMER ]{NC} 5. Grip move complete check")
                         self.gripper_comm_step += 1
 
                 # 6. Move complete check
                 elif self.gripper_comm_step == 6:
-                    if bool(self.reg_read.registers[0] & self.InMotion) is not True \
-                            and bool(self.reg_read.registers[0] & self.MovementComplete) is True:
+                    if (
+                        bool(self.reg_read.registers[0] & self.InMotion) is not True
+                        and bool(self.reg_read.registers[0] & self.MovementComplete)
+                        is True
+                    ):
                         print(f"{YELLOW}[ ZIMMER ]{NC} 6. Move complete")
                         self.reg_write[0] = ControlWord.ResetDirectionFlag
                         self.mb.write_registers(self.ADDR_SEND, self.reg_write)
@@ -340,9 +372,15 @@ class Zimmer:
 
                 # 7. Move workposition flag & move baseposition flag check
                 elif self.gripper_comm_step == 7:
-                    if bool(self.reg_read.registers[0] & self.MoveWorkpositionFlag) is not True \
-                            and bool(self.reg_read.registers[0] & self.MoveBasepositionFlag) is not True:
-                        print(f"{YELLOW}[ ZIMMER ]{NC} 7. Move workposition flag & move baseposition flag check")
+                    if (
+                        bool(self.reg_read.registers[0] & self.MoveWorkpositionFlag)
+                        is not True
+                        and bool(self.reg_read.registers[0] & self.MoveBasepositionFlag)
+                        is not True
+                    ):
+                        print(
+                            f"{YELLOW}[ ZIMMER ]{NC} 7. Move workposition flag & move baseposition flag check"
+                        )
                         self.gripper_comm_step = -1  # reset communication step
                         self.gripper_send_flag = False
 
@@ -357,9 +395,13 @@ class Zimmer:
         """
         # build command
         self.reg_write[0] = ControlWord.DataTransfer  # ControlWord
-        self.reg_write[1] = (DeviceMode.MoterControlOn << 8) | 0  # DeviceMode(3) / WorkpieceNo(0)
+        self.reg_write[1] = (
+            DeviceMode.MoterControlOn << 8
+        ) | 0  # DeviceMode(3) / WorkpieceNo(0)
         self.reg_write[2] = 50  # PositionTolerance = 0.50 mm
-        self.reg_write[3] = (self.gripper_gripForce << 8) | self.gripper_DriveVelocity  # GripForce / DriveVelocity
+        self.reg_write[3] = (
+            self.gripper_gripForce << 8
+        ) | self.gripper_DriveVelocity  # GripForce / DriveVelocity
         self.reg_write[4] = 100  # BasePosition = 1.00 mm
         self.reg_write[5] = 2000  # ShiftPosition = 20.00 mm
         self.reg_write[7] = self.gripper_gap_maximum  # WorkPosition = max stroke
@@ -374,7 +416,7 @@ class Zimmer:
 
         while self.gripper_init_flag is False:
             time.sleep(0.001)
-        print(f'{BLUE}[ ZIMMER ]{NC} Initialized')
+        print(f"{BLUE}[ ZIMMER ]{NC} Initialized")
 
     def grip(self, jaw_gap=-1, sync=True):
         """
@@ -393,14 +435,16 @@ class Zimmer:
             if actual_position > self.gripper_gap_maximum:
                 actual_position = self.gripper_gap_maximum
 
-        print(f'\n{BLUE}[ ZIMMER ]{NC} jaw_gap : {jaw_gap}')
-        print(f'{BLUE}[ ZIMMER ]{NC} actual_position : {actual_position}')
+        print(f"\n{BLUE}[ ZIMMER ]{NC} jaw_gap : {jaw_gap}")
+        print(f"{BLUE}[ ZIMMER ]{NC} actual_position : {actual_position}")
 
         if self.gripper_init_flag is True:
             self.reg_write[0] = ControlWord.DataTransfer
             self.reg_write[1] = (DeviceMode.MoterControlOn << 8) | 0
             self.reg_write[2] = 50  # PositionTolerance
-            self.reg_write[3] = (self.gripper_gripForce << 8) | self.gripper_DriveVelocity
+            self.reg_write[3] = (
+                self.gripper_gripForce << 8
+            ) | self.gripper_DriveVelocity
             self.reg_write[4] = 100  # BasePosition
             self.reg_write[5] = int(actual_position - 100)  # ShiftPosition
             self.reg_write[7] = int(actual_position)  # WorkPosition
@@ -433,14 +477,16 @@ class Zimmer:
             if actual_position < 100:
                 actual_position = 100
 
-        print(f'\n{BLUE}[ ZIMMER ]{NC} jaw_gap : {jaw_gap}')
-        print(f'{BLUE}[ ZIMMER ]{NC} actual_position : {actual_position}')
+        print(f"\n{BLUE}[ ZIMMER ]{NC} jaw_gap : {jaw_gap}")
+        print(f"{BLUE}[ ZIMMER ]{NC} actual_position : {actual_position}")
 
         if self.gripper_init_flag is True:
             self.reg_write[0] = ControlWord.DataTransfer
             self.reg_write[1] = (DeviceMode.MoterControlOn << 8) | 0
             self.reg_write[2] = 50  # PositionTolerance
-            self.reg_write[3] = (self.gripper_gripForce << 8) | self.gripper_DriveVelocity
+            self.reg_write[3] = (
+                self.gripper_gripForce << 8
+            ) | self.gripper_DriveVelocity
             self.reg_write[4] = int(actual_position)  # BasePosition
             self.reg_write[5] = int(actual_position + 100)  # ShiftPosition
             self.reg_write[7] = self.gripper_gap_maximum  # WorkPosition
@@ -549,7 +595,7 @@ class Zimmer:
         - int: Status word (Decimal)
         - list: Status word bits (16 bits)
         """
-        binary_status_word = format(self.gripper_StatusWord, '016b')[-16:]
+        binary_status_word = format(self.gripper_StatusWord, "016b")[-16:]
         return self.gripper_StatusWord, [int(bit) for bit in binary_status_word]
 
     def get_diagnosis(self):

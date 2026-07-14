@@ -6,7 +6,15 @@ import threading
 
 from PySide6.QtCore import QFile, Qt, QTimer
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import (QApplication, QCheckBox, QGroupBox, QLabel, QLineEdit, QPushButton, QSpinBox)
+from PySide6.QtWidgets import (
+    QApplication,
+    QCheckBox,
+    QGroupBox,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QSpinBox,
+)
 
 from console_colors import BLUE, GREEN, NC, RED, YELLOW
 from zimmer import Zimmer
@@ -29,34 +37,68 @@ class ZimmerWindow:
         # Connection
         self.edit_ip: QLineEdit = self.window.findChild(QLineEdit, "edit_ip")
         self.edit_port: QLineEdit = self.window.findChild(QLineEdit, "edit_port")
-        self.btn_connect: QPushButton = self.window.findChild(QPushButton, "btn_connect")
-        self.btn_disconnect: QPushButton = self.window.findChild(QPushButton, "btn_disconnect")
+        self.btn_connect: QPushButton = self.window.findChild(
+            QPushButton, "btn_connect"
+        )
+        self.btn_disconnect: QPushButton = self.window.findChild(
+            QPushButton, "btn_disconnect"
+        )
         # Current
-        self.label_cur_status: QLabel = self.window.findChild(QLabel, "label_cur_status")
-        self.label_base_position: QLabel = self.window.findChild(QLabel, "label_base_position")
-        self.label_shift_position: QLabel = self.window.findChild(QLabel, "label_shift_position")
-        self.label_work_position: QLabel = self.window.findChild(QLabel, "label_work_position")
-        self.label_cur_position: QLabel = self.window.findChild(QLabel, "label_cur_position")
-        self.label_distance_range: QLabel = self.window.findChild(QLabel, "label_distance_range")
+        self.label_cur_status: QLabel = self.window.findChild(
+            QLabel, "label_cur_status"
+        )
+        self.label_base_position: QLabel = self.window.findChild(
+            QLabel, "label_base_position"
+        )
+        self.label_shift_position: QLabel = self.window.findChild(
+            QLabel, "label_shift_position"
+        )
+        self.label_work_position: QLabel = self.window.findChild(
+            QLabel, "label_work_position"
+        )
+        self.label_cur_position: QLabel = self.window.findChild(
+            QLabel, "label_cur_position"
+        )
+        self.label_distance_range: QLabel = self.window.findChild(
+            QLabel, "label_distance_range"
+        )
         # Simple Operation
         self.btn_open: QPushButton = self.window.findChild(QPushButton, "btn_open")
         self.btn_close: QPushButton = self.window.findChild(QPushButton, "btn_close")
         # Complex Operation
-        self.spinBox_jaw_gap: QSpinBox = self.window.findChild(QSpinBox, "spinBox_jaw_gap")
+        self.spinBox_jaw_gap: QSpinBox = self.window.findChild(
+            QSpinBox, "spinBox_jaw_gap"
+        )
         self.spinBox_force: QSpinBox = self.window.findChild(QSpinBox, "spinBox_force")
-        self.spinBox_velocity: QSpinBox = self.window.findChild(QSpinBox, "spinBox_velocity")
-        self.btn_complex_operation: QPushButton = self.window.findChild(QPushButton, "btn_complex_operation")
+        self.spinBox_velocity: QSpinBox = self.window.findChild(
+            QSpinBox, "spinBox_velocity"
+        )
+        self.btn_complex_operation: QPushButton = self.window.findChild(
+            QPushButton, "btn_complex_operation"
+        )
         # Homing Operation
-        self.checkBox_homing: QCheckBox = self.window.findChild(QCheckBox, "checkBox_homing")
-        self.btn_inside_homing: QPushButton = self.window.findChild(QPushButton, "btn_inside_homing")
-        self.btn_outside_homing: QPushButton = self.window.findChild(QPushButton, "btn_outside_homing")
+        self.checkBox_homing: QCheckBox = self.window.findChild(
+            QCheckBox, "checkBox_homing"
+        )
+        self.btn_inside_homing: QPushButton = self.window.findChild(
+            QPushButton, "btn_inside_homing"
+        )
+        self.btn_outside_homing: QPushButton = self.window.findChild(
+            QPushButton, "btn_outside_homing"
+        )
         # Status Word
-        self.status_word_Box: QGroupBox = self.window.findChild(QGroupBox, "gridGroupBox_5")
+        self.status_word_Box: QGroupBox = self.window.findChild(
+            QGroupBox, "gridGroupBox_5"
+        )
         self.label_status_bit_list = []
         for i in range(16):
-            self.label_status_bit_list.append(self.window.findChild(QLabel, f"label_status_bit_{i}"))
+            self.label_status_bit_list.append(
+                self.window.findChild(QLabel, f"label_status_bit_{i}")
+            )
         # Error
-        self.label_error_code: QLabel = self.window.findChild(QLabel, "label_error_code")
+        self.label_error_code: QLabel = self.window.findChild(
+            QLabel, "label_error_code"
+        )
         self.label_error_msg: QLabel = self.window.findChild(QLabel, "label_error_msg")
 
         # --- Load JSON file ---
@@ -64,7 +106,13 @@ class ZimmerWindow:
             with open("zimmer_config.json", "r") as f:
                 self.config = json.load(f)
         else:
-            self.config = {"ip": "", "port": "502", "jaw_gap": "100", "velocity": "50", "force": "50"}
+            self.config = {
+                "ip": "",
+                "port": "502",
+                "jaw_gap": "100",
+                "velocity": "50",
+                "force": "50",
+            }
 
         # --- Init UI defaults ---
         if self.edit_ip and not self.edit_ip.text().strip():
@@ -72,11 +120,15 @@ class ZimmerWindow:
         if self.edit_port and not self.edit_port.text().strip():
             self.edit_port.setText(self.config["port"])
         if self.label_distance_range:
-            max_mm = (self.gripper.gripper_gap_maximum - 100) / 100.0  # counts(0.01mm) -> mm
+            max_mm = (
+                self.gripper.gripper_gap_maximum - 100
+            ) / 100.0  # counts(0.01mm) -> mm
             self.label_distance_range.setText(f"[ 0 ~ {max_mm:.2f} ] mm")
         if self.spinBox_jaw_gap:
             self.spinBox_jaw_gap.setValue(int(self.config["jaw_gap"]))
-            self.spinBox_jaw_gap.setRange(100, (self.gripper.gripper_gap_maximum - 100) * 2)
+            self.spinBox_jaw_gap.setRange(
+                100, (self.gripper.gripper_gap_maximum - 100) * 2
+            )
         if self.spinBox_force:
             self.spinBox_force.setValue(int(self.config["force"]))
         if self.spinBox_velocity:

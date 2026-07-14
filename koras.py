@@ -58,7 +58,6 @@ from pymodbus.client import ModbusSerialClient
 
 from console_colors import BLUE, GREEN, NC, RED, YELLOW
 
-
 # ------------------------------ constants (상수) ------------------------------
 # yapf: disable
 class GrpCmd:
@@ -117,13 +116,15 @@ class KORAS:
         self.connected = False
 
         # Modbus client
-        self.mb = ModbusSerialClient(method="rtu",
-                                     port=self.port_name,
-                                     baudrate=self.baudrate,
-                                     stopbits=self.stop_bits,
-                                     bytesize=self.data_bits,
-                                     parity=self.parity,
-                                     timeout=1)
+        self.mb = ModbusSerialClient(
+            method="rtu",
+            port=self.port_name,
+            baudrate=self.baudrate,
+            stopbits=self.stop_bits,
+            bytesize=self.data_bits,
+            parity=self.parity,
+            timeout=1,
+        )
 
         #  Threading
         self.run_action = False
@@ -163,13 +164,15 @@ class KORAS:
 
         self.port_name = port_name
         self.slave_id = slave_id
-        self.mb = ModbusSerialClient(method="rtu",
-                                     port=self.port_name,
-                                     baudrate=self.baudrate,
-                                     stopbits=self.stop_bits,
-                                     bytesize=self.data_bits,
-                                     parity=self.parity,
-                                     timeout=1)
+        self.mb = ModbusSerialClient(
+            method="rtu",
+            port=self.port_name,
+            baudrate=self.baudrate,
+            stopbits=self.stop_bits,
+            bytesize=self.data_bits,
+            parity=self.parity,
+            timeout=1,
+        )
         self.connected = self.mb.connect()
 
         if self.connected is True:
@@ -210,7 +213,9 @@ class KORAS:
         - value (int): Value
         """
         with self.mutex:
-            result = self.mb.write_registers(address=0, values=[cmd, value], unit=self.slave_id)
+            result = self.mb.write_registers(
+                address=0, values=[cmd, value], unit=self.slave_id
+            )
             if result.isError():
                 print(f"{RED}[KORAS]{NC} Failed to send command {cmd}")
 

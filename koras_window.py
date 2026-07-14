@@ -1,11 +1,11 @@
 from PySide6.QtCore import QFile, QTimer
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import (QApplication, QLabel, QLineEdit, QPushButton, QRadioButton)
+from PySide6.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QRadioButton
 
 from console_colors import BLUE, GREEN, NC, RED, YELLOW
 from koras import KORAS
 
-DEFAULT_PORT = '/dev/ttyUSB0'
+DEFAULT_PORT = "/dev/ttyUSB0"
 DEFAULT_TYPE = "gripper"
 DEFAULT_VELOCITY = "50"
 DEFAULT_FORCE = "50"
@@ -26,15 +26,27 @@ class KORASWindow:
 
         # --- Bind widgets ---
         self.edit_port: QLineEdit = self.window.findChild(QLineEdit, "edit_port")
-        self.radio_gripper: QRadioButton = self.window.findChild(QRadioButton, "radio_gripper")
-        self.radio_vacuum: QRadioButton = self.window.findChild(QRadioButton, "radio_vacuum")
-        self.label_cur_status: QLabel = self.window.findChild(QLabel, "label_cur_status")
+        self.radio_gripper: QRadioButton = self.window.findChild(
+            QRadioButton, "radio_gripper"
+        )
+        self.radio_vacuum: QRadioButton = self.window.findChild(
+            QRadioButton, "radio_vacuum"
+        )
+        self.label_cur_status: QLabel = self.window.findChild(
+            QLabel, "label_cur_status"
+        )
         self.label_cur_pose: QLabel = self.window.findChild(QLabel, "label_cur_pose")
-        self.label_distance_range: QLabel = self.window.findChild(QLabel, "label_distance_range")
-        self.edit_velocity: QLineEdit = self.window.findChild(QLineEdit, "edit_velocity")
+        self.label_distance_range: QLabel = self.window.findChild(
+            QLabel, "label_distance_range"
+        )
+        self.edit_velocity: QLineEdit = self.window.findChild(
+            QLineEdit, "edit_velocity"
+        )
         self.edit_force: QLineEdit = self.window.findChild(QLineEdit, "edit_force")
 
-        self.btn_connect: QPushButton = self.window.findChild(QPushButton, "btn_connect")
+        self.btn_connect: QPushButton = self.window.findChild(
+            QPushButton, "btn_connect"
+        )
         self.btn_option: QPushButton = self.window.findChild(QPushButton, "btn_option")
         self.btn_open: QPushButton = self.window.findChild(QPushButton, "btn_open")
         self.btn_close: QPushButton = self.window.findChild(QPushButton, "btn_close")
@@ -79,7 +91,11 @@ class KORASWindow:
             self.gripper.disconnect()
         else:
             port = self.edit_port.text().strip() if self.edit_port else DEFAULT_PORT
-            port = int(self.edit_port.text()) if self.edit_port and self.edit_port.text() else DEFAULT_PORT
+            port = (
+                int(self.edit_port.text())
+                if self.edit_port and self.edit_port.text()
+                else DEFAULT_PORT
+            )
 
             self.gripper.connect(port_name=port, slave_id=1)
 
@@ -88,8 +104,16 @@ class KORASWindow:
 
     def on_apply_options(self):
         """Apply velocity/force"""
-        vel = int(self.edit_velocity.text()) if self.edit_velocity and self.edit_velocity.text() else 50
-        frc = int(self.edit_force.text()) if self.edit_force and self.edit_force.text() else 50
+        vel = (
+            int(self.edit_velocity.text())
+            if self.edit_velocity and self.edit_velocity.text()
+            else 50
+        )
+        frc = (
+            int(self.edit_force.text())
+            if self.edit_force and self.edit_force.text()
+            else 50
+        )
 
         # clamp 0~100
         vel = max(0, min(100, vel))
