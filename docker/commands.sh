@@ -17,11 +17,6 @@ run-koras() {
     python3 koras_window.py "$@"
 }
 
-run-zimmer-example() {
-    cd /workspace || return 1
-    python3 zimmer_example.py "$@"
-}
-
 run-egh() {
     cd /workspace || return 1
     python3 egh.py "$@"
@@ -32,10 +27,9 @@ cmd-help() {
     printf "\n[gripper-manager] Commands:\n\n"
 
     printf "  Run:\n"
-    printf "    %-20s - %s\n" "run-zimmer"         "Zimmer gripper GUI (zimmer_window.py)"
-    printf "    %-20s - %s\n" "run-koras"          "KORAS gripper GUI (koras_window.py)"
-    printf "    %-20s - %s\n" "run-zimmer-example" "Zimmer minimal example (zimmer_example.py)"
-    printf "    %-20s - %s\n" "run-egh"            "SCHUNK EGH CLI (egh.py)              [ARGS]"
+    printf "    %-20s - %s\n" "run-zimmer" "Zimmer gripper GUI (zimmer_window.py)"
+    printf "    %-20s - %s\n" "run-koras"  "KORAS gripper GUI (koras_window.py)"
+    printf "    %-20s - %s\n" "run-egh"    "SCHUNK EGH CLI (egh.py)  [ARGS]"
     printf "\n"
 
     printf "  Config / Help:\n"

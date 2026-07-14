@@ -53,7 +53,7 @@
 
 ### 주요 구성요소
 
-- **zimmer.py / zimmer_window.py** (Python): Zimmer 2/3핑거 그리퍼 Modbus TCP/IP 제어 모듈 및 GUI
+- **zimmer.py / zimmer_window.py** (Python): Zimmer 2/3핑거 그리퍼 Modbus TCP/IP 제어 모듈 및 GUI — 상세 문서: [docs/ZIMMER_README.md](docs/ZIMMER_README.md)
 - **koras.py / koras_window.py** (Python): KORAS 모터 구동 그리퍼 Modbus RTU 제어 모듈 및 GUI
 - **egh.py** (Python): SCHUNK EGH IO-Link 그리퍼 Modbus TCP/IP 어댑터 제어 (CLI)
 
@@ -133,8 +133,11 @@ Gripper_manager/
 │   ├── config.sh          # Docker 설정 (이미지/컨테이너 이름)
 │   └── config.sh.example  # Docker 설정 템플릿
 ├── docs/
+│   ├── ZIMMER_README.md   # Zimmer 모듈/예제 문서
 │   ├── zimmer_gui.png     # Zimmer GUI 스크린샷
 │   └── koras_gui.png      # KORAS GUI 스크린샷
+├── examples/
+│   └── zimmer_example.py  # Zimmer 최소 예제 (열기/닫기/특정 위치 이동)
 └── README.md
 ```
 
@@ -303,14 +306,13 @@ cmd-help    # 사용 가능한 command 목록 확인
 
 전체 command 정의는 [commands.sh](docker/commands.sh)를 참고하세요.
 
-| 명령                 | 설명                            | 참고                                   |
-| -------------------- | ------------------------------- | -------------------------------------- |
-| `run-zimmer`         | Zimmer 그리퍼 GUI 실행          | [zimmer_window.py](zimmer_window.py)   |
-| `run-koras`          | KORAS 그리퍼 GUI 실행           | [koras_window.py](koras_window.py)     |
-| `run-zimmer-example` | Zimmer 최소 예제 실행           | [zimmer_example.py](zimmer_example.py) |
-| `run-egh`            | SCHUNK EGH CLI 실행 (인자 전달) | [egh.py](egh.py)                       |
-| `source-config`      | `docker/config.sh` 재로드       | —                                      |
-| `cmd-help`           | 사용 가능한 command 목록 표시   | —                                      |
+| 명령            | 설명                            | 참고                                 |
+| --------------- | ------------------------------- | ------------------------------------ |
+| `run-zimmer`    | Zimmer 그리퍼 GUI 실행          | [zimmer_window.py](zimmer_window.py) |
+| `run-koras`     | KORAS 그리퍼 GUI 실행           | [koras_window.py](koras_window.py)   |
+| `run-egh`       | SCHUNK EGH CLI 실행 (인자 전달) | [egh.py](egh.py)                     |
+| `source-config` | `docker/config.sh` 재로드       | —                                    |
+| `cmd-help`      | 사용 가능한 command 목록 표시   | —                                    |
 
 ---
 
