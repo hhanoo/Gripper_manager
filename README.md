@@ -54,7 +54,7 @@
 ### 주요 구성요소
 
 - **zimmer.py / zimmer_window.py** (Python): Zimmer 2/3핑거 그리퍼 Modbus TCP/IP 제어 모듈 및 GUI — 상세 문서: [docs/ZIMMER_README.md](docs/ZIMMER_README.md)
-- **koras.py / koras_window.py** (Python): KORAS 모터 구동 그리퍼 Modbus RTU 제어 모듈 및 GUI
+- **koras.py / koras_window.py** (Python): KORAS 모터 구동 그리퍼 Modbus RTU 제어 모듈 및 GUI — 상세 문서: [docs/KORAS_README.md](docs/KORAS_README.md)
 - **egh.py** (Python): SCHUNK EGH IO-Link 그리퍼 Modbus TCP/IP 어댑터 제어 (CLI)
 
 ### 적용 가능 영역
@@ -134,10 +134,12 @@ Gripper_manager/
 │   └── config.sh.example  # Docker 설정 템플릿
 ├── docs/
 │   ├── ZIMMER_README.md   # Zimmer 모듈/예제 문서
+│   ├── KORAS_README.md    # KORAS 모듈/예제 문서
 │   ├── zimmer_gui.png     # Zimmer GUI 스크린샷
 │   └── koras_gui.png      # KORAS GUI 스크린샷
 ├── examples/
-│   └── zimmer_example.py  # Zimmer 최소 예제 (열기/닫기/특정 위치 이동)
+│   ├── zimmer_example.py  # Zimmer 최소 예제 (열기/닫기/특정 위치 이동)
+│   └── koras_example.py   # KORAS 최소 예제 (열기/닫기/특정 위치 이동)
 └── README.md
 ```
 
@@ -194,10 +196,11 @@ uv run python koras_window.py     # KORAS 그리퍼 GUI
 
 ### 외부 패키지
 
-| 패키지   | 버전    | 용도                    |
-| -------- | ------- | ----------------------- |
-| pymodbus | 3.6.9   | Modbus TCP/IP, RTU 통신 |
-| PySide6  | 6.10.0+ | Qt6 GUI 프레임워크      |
+| 패키지   | 버전    | 용도                           |
+| -------- | ------- | ------------------------------ |
+| pymodbus | 3.6.9   | Modbus TCP/IP, RTU 통신        |
+| pyserial | 3.5     | RTU 시리얼 포트 (pymodbus[serial]) |
+| PySide6  | 6.10.0+ | Qt6 GUI 프레임워크             |
 
 ---
 

@@ -107,7 +107,7 @@ RUN pip3 install --no-cache-dir --upgrade pip setuptools wheel
 # - Application dependencies
 RUN pip3 install --no-cache-dir \
     PySide6 \
-    pymodbus==3.6.9
+    "pymodbus[serial]==3.6.9"
 
 # =========================================================================
 # Workspace Setup

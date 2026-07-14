@@ -117,7 +117,6 @@ class KORAS:
 
         # Modbus client
         self.mb = ModbusSerialClient(
-            method="rtu",
             port=self.port_name,
             baudrate=self.baudrate,
             stopbits=self.stop_bits,
@@ -165,7 +164,6 @@ class KORAS:
         self.port_name = port_name
         self.slave_id = slave_id
         self.mb = ModbusSerialClient(
-            method="rtu",
             port=self.port_name,
             baudrate=self.baudrate,
             stopbits=self.stop_bits,
@@ -214,7 +212,7 @@ class KORAS:
         """
         with self.mutex:
             result = self.mb.write_registers(
-                address=0, values=[cmd, value], unit=self.slave_id
+                address=0, values=[cmd, value], slave=self.slave_id
             )
             if result.isError():
                 print(f"{RED}[KORAS]{NC} Failed to send command {cmd}")
@@ -228,7 +226,7 @@ class KORAS:
         - value (int): Value
         """
         with self.mutex:
-            rr = self.mb.read_input_registers(address=10, count=8, unit=self.slave_id)
+            rr = self.mb.read_input_registers(address=10, count=8, slave=self.slave_id)
             if rr.isError():
                 print(f"{RED}[KORAS]{NC} Failed to read registers")
                 return
