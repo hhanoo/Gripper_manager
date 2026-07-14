@@ -128,6 +128,8 @@ Gripper_manager/
 │   ├── Dockerfile         # Docker 이미지 빌드 설정
 │   ├── build.sh           # Docker 이미지 빌드 스크립트
 │   ├── run.sh             # Docker 컨테이너 실행 스크립트
+│   ├── entrypoint.sh      # 컨테이너 진입점 (소유권 복원)
+│   ├── commands.sh        # 컨테이너 내부 run-* 헬퍼 명령
 │   ├── config.sh          # Docker 설정 (이미지/컨테이너 이름)
 │   └── config.sh.example  # Docker 설정 템플릿
 ├── docs/
@@ -150,9 +152,9 @@ docker pull hhanoo/project:gripper-manager
 cd Gripper_manager/docker
 ./run.sh
 
-# 3. 컨테이너 내부에서 실행
-python3 zimmer_window.py    # Zimmer 그리퍼 GUI
-python3 koras_window.py     # KORAS 그리퍼 GUI
+# 3. 컨테이너 내부에서 실행 (자동 source된 command 사용)
+run-zimmer    # Zimmer 그리퍼 GUI
+run-koras     # KORAS 그리퍼 GUI
 ```
 
 ### Option 2: Native
@@ -258,7 +260,7 @@ uv sync --frozen
 
 ```bash
 # Docker 컨테이너 내부
-python3 zimmer_window.py
+run-zimmer
 
 # Native (uv)
 uv run python zimmer_window.py
@@ -268,27 +270,47 @@ uv run python zimmer_window.py
 
 ```bash
 # Docker 컨테이너 내부
-python3 koras_window.py
+run-koras
 
 # Native (uv)
 uv run python koras_window.py
 ```
 
-### SCHUNK EGH (CLI)
+### SCHUNK EGH (CLI) - (개발 중)
 
 ```bash
-# 초기화
-python3 egh.py --ip 192.168.3.113 --port 502 --action init
+# Docker 컨테이너 내부
+run-egh --ip 192.168.3.113 --port 502 --action init
 
-# 그립 (폭 0%)
-python3 egh.py --ip 192.168.3.113 --action grip --width 0
-
-# 릴리즈 (폭 100%)
-python3 egh.py --ip 192.168.3.113 --action release --width 100
-
-# 상태 확인
-python3 egh.py --ip 192.168.3.113 --action status
+# Native (uv)
+uv run python egh.py --ip 192.168.3.113 --port 502 --action init      # 초기화
+uv run python egh.py --ip 192.168.3.113 --action grip --width 0       # 그립 (폭 0%)
+uv run python egh.py --ip 192.168.3.113 --action release --width 100  # 릴리즈 (폭 100%)
+uv run python egh.py --ip 192.168.3.113 --action status               # 상태 확인
 ```
+
+### Docker 실행
+
+```bash
+cd docker
+./run.sh
+
+# 컨테이너 내부 (자동 source됨)
+cmd-help    # 사용 가능한 command 목록 확인
+```
+
+### Docker Commands
+
+전체 command 정의는 [commands.sh](docker/commands.sh)를 참고하세요.
+
+| 명령                 | 설명                            | 참고                                   |
+| -------------------- | ------------------------------- | -------------------------------------- |
+| `run-zimmer`         | Zimmer 그리퍼 GUI 실행          | [zimmer_window.py](zimmer_window.py)   |
+| `run-koras`          | KORAS 그리퍼 GUI 실행           | [koras_window.py](koras_window.py)     |
+| `run-zimmer-example` | Zimmer 최소 예제 실행           | [zimmer_example.py](zimmer_example.py) |
+| `run-egh`            | SCHUNK EGH CLI 실행 (인자 전달) | [egh.py](egh.py)                       |
+| `source-config`      | `docker/config.sh` 재로드       | —                                      |
+| `cmd-help`           | 사용 가능한 command 목록 표시   | —                                      |
 
 ---
 

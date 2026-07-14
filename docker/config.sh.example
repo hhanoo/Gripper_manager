@@ -5,3 +5,7 @@ IMAGE_NAME="hhanoo/project:gripper-manager"
 
 # Docker container name (used in run.sh)
 CONTAINER_NAME="gripper-manager"
+
+# X11 .Xauthority path on host (used in run.sh)
+# - Mounted into container as /root/.Xauthority for Qt GUI display.
+XAUTHORITY_PATH="$HOME/.Xauthority"
